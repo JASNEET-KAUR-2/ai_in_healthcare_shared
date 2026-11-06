@@ -48,6 +48,20 @@ A reviewer only protects patients if they **notice** a wrong output and **act** 
 
 Each pattern moves risk to a different place. "Draft and approve" is only as safe as the approval step.
 
+### How each pattern can harm a patient
+
+A pattern fails where its assumption about the human fails. The table names the usual failure and one way it can reach a patient. The evidence for several of these comes later in this session.
+
+| Pattern | If the assumption fails | One way a patient can be harmed |
+|---|---|---|
+| **Second reader** | The AI output, seen second, sways a correct first reading | The clinician switches from a correct reading to the AI's wrong one. Or both miss the same finding, and the agreement falsely reassures them |
+| **Concurrent aid** | The clinician anchors on the suggestion (§4) | A wrong suggestion is copied, as in the mammography study in §4 |
+| **Triage** | Items ranked low are read late, or only skimmed | An urgent case that the AI ranked low waits in the queue, and treatment is delayed |
+| **Draft and approve** | Approving becomes routine (approval fatigue, §6) | A wrong reply or a wrong cancellation is approved among many correct items |
+| **Autonomous** | Monitoring does not notice drift | Errors reach many patients before anyone notices |
+
+These are possible failures that follow from each pattern's design, not measured rates. How often each happens depends on the AI's error rate, the workload and the interface.
+
 ## 3. When the combination helps
 
 **Skin cancer recognition (Tschandl et al., 2020).** Clinicians of different experience classified dermatoscopic images with and without AI support.
@@ -71,7 +85,9 @@ The same support that helps when the AI is right harms when it is wrong. Whether
 
 Training and **emphasising the user's accountability** reduced it.
 
-**Mammography (Dratsch et al., 2023).** 27 radiologists rated 40 mammograms with a purported AI system. Unknown to them, the AI's category was wrong for 12 of the 40.
+**Anchoring** is a closely related bias. The first answer a person sees (the *anchor*) pulls their judgement towards it, even when they then try to think for themselves. When an AI suggestion is on the screen before or during a decision, the suggestion becomes the anchor. This is why the order in which the clinician and the AI give their answers matters (§2 and §7).
+
+**Mammography (Dratsch et al., 2023).** 27 radiologists rated 40 mammograms with a purported AI system. The AI's suggested category was shown with each mammogram as they read it: the **concurrent-aid** pattern from §2. Unknown to them, the AI's category was wrong for 12 of the 40.
 
 | Radiologists | Correct when AI was right | Correct when AI was wrong |
 |---|---:|---:|
@@ -94,7 +110,29 @@ A common proposal is to show **why** the model made its prediction, so that peop
 | Biased model, no explanation | −11.3 percentage points |
 | Biased model, with explanation | −9.1 percentage points |
 
-**Interpretation:** a biased model hurt more than an accurate model helped, and the explanations did **not** significantly reduce the harm. An explanation is something else to read, not a guarantee that a reader will catch the error.
+**Interpretation:** a biased model hurt more (−11.3 points) than an accurate model helped (+2.9 points). With an explanation the harm was −9.1 points instead of −11.3, a reduction the study found was not statistically significant. Clinicians who saw the explanation were still about 9 points less accurate than with no AI at all.
+
+**The explanations showed the flaw.** One biased model predicted pneumonia more often for patients aged 80 or older. Its explanations highlighted features that have nothing to do with pneumonia, such as the low bone density that comes with age ([University of Michigan news release, 2023](https://www.eurekalert.org/news-releases/1011284)). The clue was on the screen, and accuracy still fell. An explanation is something else to read, not a guarantee that a reader will catch the error.
+
+### Why an explanation may not help
+
+For an explanation to stop an error, a clinician must do four things in turn:
+
+1. **Look** at the explanation. Under workload and time pressure (§4), a reader may glance at the prediction and skip the map.
+2. **Know what a correct explanation looks like**: which region or feature should matter for this diagnosis. This needs clinical knowledge and some understanding of the explanation method.
+3. **Notice the mismatch**, for example that the model is looking at bone rather than at signs of infection in the lung.
+4. **Override** the AI, rather than assuming the model has seen something they missed.
+
+The chain breaks if any one step fails. Automation bias acts on steps 1, 3 and 4. A map that looks sensible can also make a prediction feel more trustworthy whether or not it is right. [Unit IV Session 5](../../module4/lectures/session-05-explainability-skills.md) explains why a sensible-looking heat map does not show that a prediction is correct.
+
+### Judging a claim about a safety feature
+
+Vendors and hospitals often claim that one feature makes an AI system safe: a heat map, a confidence score, a human reviewer. You can test such a claim with four questions.
+
+1. **What chain of events does the claim assume?** Write out the steps that must happen for the feature to prevent harm, as in the list above.
+2. **What evidence would test that chain?** A picture of a good-looking map does not. A study that measures clinicians' decisions with the tool, including cases where the model is wrong, does.
+3. **What does the available evidence show?** Compare the claim with studies such as Jabbour et al., Dratsch et al. (§4) and Tschandl et al. (§3).
+4. **If the claim is weak, what would reduce the risk instead?** Use the design choices in §7, the local validation and monitoring of Unit IV, and explanations used by developers and auditors across many cases rather than as a bedside guarantee.
 
 ## 6. Reviewer workload and approval fatigue
 
@@ -128,6 +166,15 @@ Ways to make the layer stronger:
 | Disagreeing | One click, with a reason recorded | Makes rejection as easy as approval |
 | Responsibility | Stated clearly in the interface and training | Emphasising accountability reduced automation bias |
 | Monitoring | Track acceptance and override rates | Shows over-reliance and drift over time |
+
+### The cost of reading first
+
+Showing the AI output only after the clinician's own judgement turns a concurrent aid into a **second reader**. The first reading is independent, so a wrong suggestion cannot anchor it, and the AI becomes a check rather than a starting point. This change is not free:
+
+1. **More time per case.** The clinician makes and records a decision, then looks again at the AI output. This is why the table says "where time allows".
+2. **Disagreements need a rule.** When the clinician and the AI disagree, someone must decide what happens next, for example a second clinician reviews the case, or the patient is recalled for more tests. Each route adds work, and recalls can cause anxiety and extra tests for patients.
+3. **The AI can still persuade.** At the second step, a confident wrong output can still talk the clinician out of a correct first reading. Recording the first decision before the AI is shown makes such changes visible, so they can be audited.
+4. **The first read must really come first.** If the AI output can be opened before the first decision is recorded, the service is a concurrent aid in practice.
 
 ## 8. The patient–provider–AI relationship
 
@@ -163,9 +210,10 @@ Flags help a tired reviewer, but the most dangerous errors are the ones that pro
 | Idea | Key point |
 |---|---|
 | Human in the loop | A safeguard only if the human notices and acts |
+| Patterns | Each assumes something about the human; harm arises where that assumption fails |
 | Combination | Good AI plus clinicians can beat either alone; faulty AI misleads even experts |
 | Automation bias | A wrong AI suggestion cut inexperienced radiologists' accuracy from 79.7% to 19.8% |
-| Explanations | Did not significantly reduce harm from a biased model |
+| Explanations | Did not significantly reduce harm from a biased model, even when they highlighted irrelevant features |
 | Approval fatigue | Hundreds of mostly correct items a day hide the few wrong ones |
 | Design | Show uncertainty, make rejection easy, state accountability, monitor override rates |
 | Patients | Most want to be told when AI plays a big role; consent and responsibility must be clear |
@@ -174,10 +222,10 @@ Flags help a tired reviewer, but the most dangerous errors are the ones that pro
 
 ## 10. Review questions
 
-1. For the "triage" pattern in §2, describe one way it could harm a patient whose case the AI ranks as low priority.
+1. A hospital uses the triage pattern for chest X-rays. Name one check it could run to find out whether urgent cases that the AI ranks low are being read too late.
 2. In Tschandl et al., why might the least experienced clinicians gain the most from good AI and also be the most at risk from faulty AI?
 3. Using the Dratsch et al. table, calculate the drop in accuracy for very experienced radiologists when the AI was wrong. Why is experience not a complete defence?
-4. A vendor says: "Our model shows a heat map, so clinicians will catch its mistakes." Use Jabbour et al. to respond.
+4. A vendor says: "Our model shows a heat map, so clinicians will catch its mistakes." Use the four questions in §5 and Jabbour et al. to respond. Which step of the chain is most likely to fail in a busy hospital?
 5. Redo the worked example in §6 for 120 messages a day and 30 seconds per proposal. How much reviewer time is needed?
 6. Propose two changes to the inbox agent's review screen that would reduce approval fatigue without removing the human.
 7. Should a patient be told that a portal reply was drafted by AI and approved by a nurse? Give one argument for and one against.
@@ -187,6 +235,6 @@ Flags help a tired reviewer, but the most dangerous errors are the ones that pro
 - Tschandl P, Rinner C, Apalla Z, et al. Human–computer collaboration for skin cancer recognition. *Nature Medicine*. 2020;26(8):1229–1234. [doi:10.1038/s41591-020-0942-0](https://doi.org/10.1038/s41591-020-0942-0)
 - Goddard K, Roudsari A, Wyatt JC. Automation bias: a systematic review of frequency, effect mediators, and mitigators. *Journal of the American Medical Informatics Association*. 2012;19(1):121–127. [doi:10.1136/amiajnl-2011-000089](https://doi.org/10.1136/amiajnl-2011-000089)
 - Dratsch T, Chen X, Rezazade Mehrizi M, et al. Automation bias in mammography: the impact of artificial intelligence BI-RADS suggestions on reader performance. *Radiology*. 2023;307(4):e222176. [doi:10.1148/radiol.222176](https://doi.org/10.1148/radiol.222176)
-- Jabbour S, Fouhey D, Shepard S, et al. Measuring the impact of AI in the diagnosis of hospitalized patients: a randomized clinical vignette survey study. *JAMA*. 2023;330(23):2275–2284. [doi:10.1001/jama.2023.22295](https://doi.org/10.1001/jama.2023.22295)
+- Jabbour S, Fouhey D, Shepard S, et al. Measuring the impact of AI in the diagnosis of hospitalized patients: a randomized clinical vignette survey study. *JAMA*. 2023;330(23):2275–2284. [doi:10.1001/jama.2023.22295](https://doi.org/10.1001/jama.2023.22295). Plain-language summary, including what the biased model's explanations highlighted: University of Michigan. [Clinicians could be fooled by biased AI, despite explanations](https://www.eurekalert.org/news-releases/1011284). EurekAlert!, December 2023.
 - Tierney AA, Gayre G, Hoberman B, et al. Ambient artificial intelligence scribes to alleviate the burden of clinical documentation. *NEJM Catalyst*. 2024;5(3). [doi:10.1056/CAT.23.0404](https://doi.org/10.1056/CAT.23.0404)
 - Khullar D, Casalino LP, Qian Y, Lu Y, Krumholz HM, Aneja S. Perspectives of patients about artificial intelligence in health care. *JAMA Network Open*. 2022;5(5):e2210309. [doi:10.1001/jamanetworkopen.2022.10309](https://doi.org/10.1001/jamanetworkopen.2022.10309)
