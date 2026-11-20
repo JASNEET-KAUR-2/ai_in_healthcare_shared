@@ -162,10 +162,12 @@ Ways to make the layer stronger:
 |---|---|---|
 | When the AI output appears | After the clinician's own first judgement, where time allows | Reduces anchoring on the AI |
 | What it shows | Information and uncertainty, not only a verdict | Goddard et al.: recommendations increase over-reliance |
+| Where its content comes from | Each statement in an AI draft linked to its source in the record (note, result, order) | The reviewer can check a claim instead of trusting it, and spots statements with no source |
 | When it is unsure | Says so, or abstains and hands over | A confident wrong answer is the most misleading |
+| Approving | Nothing approved by default; no bulk approval of many items; high-risk content (medicines, cancellations, follow-up) confirmed item by item | One click for everything turns review into a formality (approval fatigue, §6) |
 | Disagreeing | One click, with a reason recorded | Makes rejection as easy as approval |
 | Responsibility | Stated clearly in the interface and training | Emphasising accountability reduced automation bias |
-| Monitoring | Track acceptance and override rates | Shows over-reliance and drift over time |
+| Monitoring | Track acceptance and override rates; audit a random sample of approved outputs for errors | Shows over-reliance and drift over time. Errors that survive review show over-trust |
 
 ### The cost of reading first
 

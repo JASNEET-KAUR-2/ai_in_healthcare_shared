@@ -125,6 +125,8 @@ At four Polish endoscopy centres, AI tools for detecting polyps were introduced 
 
 The **adenoma detection rate** is the share of colonoscopies that find at least one adenoma (a polyp that can become cancer); it is a standard quality measure. The fall suggests that regular AI use may have changed how endoscopists worked when AI was absent. This was an **observational** before–after study, so it cannot prove cause, but it is an early signal worth monitoring.
 
+**Detecting deskilling:** compare the quality of work done *without* the AI before and after it was introduced, as Budzyń et al. did; periodically assess staff, especially trainees, doing the task without the tool; and watch performance when the tool is down.
+
 **Workforce implications:** keep training and assessing core skills; plan for the AI being unavailable; count the new review work in staffing.
 
 ## 6. Human-centred design principles
